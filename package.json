@@ -1,0 +1,32 @@
+{
+  "name": "adminwallet_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bitcoinjs-lib": "^6.1.6",
+    "dotenv": "^16.4.5",
+    "eccrypto": "^1.1.6",
+    "ecpair": "^2.1.0",
+    "ethers": "^6.13.3",
+    "express": "^4.19.2",
+    "ip": "^2.0.1",
+    "libsodium-wrappers": "^0.7.15",
+    "mongodb": "^6.8.1",
+    "mongoose": "^8.6.1",
+    "nodemailer": "^6.9.15",
+    "nodemon": "^3.1.7",
+    "request": "^2.88.2",
+    "secrets.js-grempe": "^2.0.0",
+    "tiny-secp256k1": "^2.2.3",
+    "tronweb": "^6.0.0",
+    "xrpl": "^4.0.0"
+  }
+}
