@@ -9,7 +9,7 @@ const receivedSignature = req.headers['x-signature'];
 const publicKeyHex = process.env.PUBLICKEY_WITHDRAW;
 const publicKey = Buffer.from(publicKeyHex, 'hex');
 
-console.log("Admin process comes ---:>>>>>>");
+console.log("Admin process comes ---::>>>>>>");
   
 if (!receivedSignature) {
 return res.status(401).json({ status: false, message: "Signature required" });
