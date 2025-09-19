@@ -16,8 +16,9 @@ return res.status(401).json({ status: false, message: "Signature required" });
 }
 
 try {
-  const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-const message = Buffer.from(url, 'utf8');
+  // const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+// const message = Buffer.from(url, 'utf8');
+const message = Buffer.from(req.originalUrl, "utf8");
 const signature = Buffer.from(receivedSignature, 'hex');
 
 console.log("Received Signature:", receivedSignature); 
