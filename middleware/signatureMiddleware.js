@@ -1,41 +1,68 @@
-const sodium = require('libsodium-wrappers');
+const sodium = require("libsodium-wrappers");
 
 (async () => {
-await sodium.ready;
+  await sodium.ready;
 })();
 
 const verifySignature = async (req, res, next) => {
-const receivedSignature = req.headers['x-signature'];
-const publicKeyHex = process.env.PUBLICKEY_WITHDRAW;
-const publicKey = Buffer.from(publicKeyHex, 'hex');
+  const receivedSignature = req.headers["x-signature"];
+  const publicKeyHex = process.env.PUBLICKEY_WITHDRAW;
+  const publicKey = Buffer.from(publicKeyHex, "hex");
 
-console.log("Admin process comes ---::>>>>>>");
-  
-if (!receivedSignature) {
-return res.status(401).json({ status: false, message: "Signature required" });
-}
+  console.log("Admin process comes ---::>>>>>>");
 
-try {
-  // const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-// const message = Buffer.from(url, 'utf8');
-const message = Buffer.from("/adminprocess" + req.originalUrl, "utf8");
-const signature = Buffer.from(receivedSignature, 'hex');
+  if (!receivedSignature) {
+    return res
+      .status(401)
+      .json({ status: false, message: "Signature required" });
+  }
 
-console.log("Received Signature:", receivedSignature); 
-console.log("Message for Verification:", message.toString()); 
-console.log("Signature for Verification:", signature.toString('hex'));
+  try {
+    // const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    // const message = Buffer.from(url, 'utf8');
+    const message = Buffer.from("/adminprocess" + req.originalUrl, "utf8");
+    const signature = Buffer.from(receivedSignature, "hex");
 
-const isValid = sodium.crypto_sign_verify_detached(signature, message, publicKey);
-if (isValid) {
-console.log("Signature verified successfully");
-return next();
-} else {
-return res.status(401).json({ status: false, message: "Invalid signature" });
-}
-} catch (error) {
-console.error("Signature verification error:", error);
-return res.status(500).json({ status: false, message: "Signature verification error", error });
-}
+    console.log("Received Signature:", receivedSignature);
+    console.log("Message for Verification:", message.toString());
+    console.log("Signature for Verification:", signature.toString("hex"));
+
+    const plainPath = req.originalUrl; // /api/...
+    const proxyPath = "/adminprocess" + req.originalUrl; // /adminprocess/api/...
+
+    const validPlain = sodium.crypto_sign_verify_detached(
+      signature,
+      Buffer.from(plainPath, "utf8"),
+      publicKey
+    );
+
+    const validProxy = sodium.crypto_sign_verify_detached(
+      signature,
+      Buffer.from(proxyPath, "utf8"),
+      publicKey
+    );
+
+    // const isValid = sodium.crypto_sign_verify_detached(
+    //   signature,
+    //   message,
+    //   publicKey
+    // );
+    // if (isValid) {
+
+    if (validPlain || validProxy) {
+      console.log("Signature verified successfully");
+      return next();
+    } else {
+      return res
+        .status(401)
+        .json({ status: false, message: "Invalid signature" });
+    }
+  } catch (error) {
+    console.error("Signature verification error:", error);
+    return res
+      .status(500)
+      .json({ status: false, message: "Signature verification error", error });
+  }
 };
 
 module.exports = verifySignature;
